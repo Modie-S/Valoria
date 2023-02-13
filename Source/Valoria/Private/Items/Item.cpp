@@ -3,16 +3,15 @@
 
 
 #include "Items/Item.h"
-#include "DrawDebugHelpers.h"
-#include "Valoria/Valoria.h"
+#include "Valoria/DebugMacros.h"
 
-#define THIRTY 30
 
 AItem::AItem()
 {
- 	
 	PrimaryActorTick.bCanEverTick = true;
 
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+	RootComponent = ItemMesh;
 }
 
 
@@ -20,12 +19,16 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UWorld* World = GetWorld();
-	FVector Location = GetActorLocation();
-	FVector Forward = GetActorForwardVector();
-	
-	DRAW_SPHERE(Location)
-	DRAW_LINE(Location, Location + Forward * 100.f);
+}
+
+float AItem::TransformedSin()
+{
+	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
+}
+
+float AItem::TransformedCos()
+{
+	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
 }
 
 
@@ -33,6 +36,8 @@ void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	RunningTime += DeltaTime;
 
+	
 }
 
