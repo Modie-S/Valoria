@@ -4,59 +4,45 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
-#include "Bird.generated.h"
+#include "GameFramework/Character.h"
+#include "ValoriaCharacter.generated.h"
 
-class UCapsuleComponent;
-class USkeletalMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class VALORIA_API ABird : public APawn
+class VALORIA_API AValoriaCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	
-	ABird();
+	AValoriaCharacter();
 
 protected:
 	
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
-
 	void MoveRight(float Value);
-
 	void Turn(float Value);
-
 	void LookUp(float Value);
 
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 
 	UPROPERTY(VisibleAnywhere)
-	UCapsuleComponent* Capsule;
-
-	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* BirdMesh;
-
-	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* ViewCamera;
+	UCameraComponent* Camera;
+
 };
-
-
-
 
 
 

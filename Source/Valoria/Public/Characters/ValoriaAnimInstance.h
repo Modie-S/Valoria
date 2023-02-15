@@ -1,0 +1,35 @@
+// MaxiMod Games 2023
+// Modie Shakarchi
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Animation/AnimInstance.h"
+#include "ValoriaAnimInstance.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class VALORIA_API UValoriaAnimInstance : public UAnimInstance
+{
+	GENERATED_BODY()
+
+public:
+
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaTime) override;
+
+	UPROPERTY(BlueprintReadOnly)
+	class AValoriaCharacter* ValoriaCharacter;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	class UCharacterMovementComponent* ValoriaCharacterMovement;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float GroundSpeed;
+	
+};
+
+
+
