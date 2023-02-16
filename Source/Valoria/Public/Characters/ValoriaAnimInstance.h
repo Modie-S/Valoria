@@ -26,8 +26,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	class UCharacterMovementComponent* ValoriaCharacterMovement;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float GroundSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	bool IsFalling;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	bool IsInAir;
+
+
+
+	
 	
 };
 

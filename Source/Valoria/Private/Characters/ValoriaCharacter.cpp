@@ -88,5 +88,7 @@ void AValoriaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(FName("Turn"), this, &AValoriaCharacter::Turn);
 	PlayerInputComponent->BindAxis(FName("LookUp"), this, &AValoriaCharacter::LookUp);
 
+	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
+
 }
 

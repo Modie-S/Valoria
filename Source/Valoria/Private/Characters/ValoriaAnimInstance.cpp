@@ -26,7 +26,11 @@ void UValoriaAnimInstance::NativeUpdateAnimation(float DeltaTime)
     if (ValoriaCharacterMovement)
     {
         GroundSpeed = UKismetMathLibrary::VSizeXY(ValoriaCharacterMovement->Velocity);
+        IsFalling = ValoriaCharacterMovement->IsFalling();
+
     }
+
+
 }
 
 
