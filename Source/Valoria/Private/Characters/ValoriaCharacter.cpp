@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/Item.h"
+#include "Items/Weapons/Weapon.h"
 
 
 AValoriaCharacter::AValoriaCharacter()
@@ -73,6 +75,16 @@ void AValoriaCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
+void AValoriaCharacter::EKeyPressed()
+{
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	}
+}
+
 void AValoriaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -89,6 +101,7 @@ void AValoriaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(FName("LookUp"), this, &AValoriaCharacter::LookUp);
 
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(FName("Equip"), IE_Pressed, this, &AValoriaCharacter::EKeyPressed);
 
 }
 
