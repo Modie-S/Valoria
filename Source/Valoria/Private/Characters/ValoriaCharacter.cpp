@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
+#include "Animation/AnimMontage.h"
 
 
 AValoriaCharacter::AValoriaCharacter()
@@ -85,6 +86,47 @@ void AValoriaCharacter::EKeyPressed()
 	}
 }
 
+void AValoriaCharacter::Attack()
+{
+	if (ActionState == EActionState::EAS_Unoccupied)
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+	
+}
+
+void AValoriaCharacter::PlayAttackMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && AttackMontage && CharacterState == ECharacterState::ECS_EquippedOneHandedWeapon)
+	{
+		AnimInstance->Montage_Play(AttackMontage);
+		const int32 Selection = FMath::RandRange(0, 2);
+		FName SectionName = FName();
+		switch (Selection)
+		{
+			case 0:
+				SectionName = FName("Attack1");
+				break;
+			case 1:
+				SectionName = FName("Attack2");
+				break;
+			case 2:
+				SectionName = FName("Attack3");
+				break;
+			default:
+				break;
+		}
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+void AValoriaCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
 void AValoriaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -102,6 +144,7 @@ void AValoriaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(FName("Equip"), IE_Pressed, this, &AValoriaCharacter::EKeyPressed);
+	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &AValoriaCharacter::Attack);
 
 }
 

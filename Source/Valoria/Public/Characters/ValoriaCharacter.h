@@ -11,6 +11,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class AItem;
+class UAnimMontage;
 
 UCLASS()
 class VALORIA_API AValoriaCharacter : public ACharacter
@@ -25,15 +26,30 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	//
+	// Input Actions
+	//
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
 	void EKeyPressed();
+	void Attack();
+	
+	//
+	// Playing montages
+	//
+	void PlayAttackMontage();
+	
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
 
 private:
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
@@ -44,6 +60,12 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
 
+	//
+	// Animation Montages
+	//
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* AttackMontage;
+
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
@@ -52,6 +74,12 @@ public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 };
+
+
+
+
+
+
 
 
 
