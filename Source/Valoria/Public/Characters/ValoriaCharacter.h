@@ -43,6 +43,7 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
+	bool CanAttack();
 
 private:
 
@@ -74,6 +75,8 @@ public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 };
+
+
 
 
 

@@ -41,6 +41,7 @@ void AValoriaCharacter::BeginPlay()
 
 void AValoriaCharacter::MoveForward(float Value)
 {
+	if (ActionState == EActionState::EAS_Attacking) return;
 	if (Controller && (Value != 0))
 	{
 		// find which way is forward according to controller rotation
@@ -55,6 +56,7 @@ void AValoriaCharacter::MoveForward(float Value)
 
 void AValoriaCharacter::MoveRight(float Value)
 {
+	if (ActionState == EActionState::EAS_Attacking) return;
 	if (Controller && (Value != 0))
 	{
 		// find which way is right
@@ -88,12 +90,17 @@ void AValoriaCharacter::EKeyPressed()
 
 void AValoriaCharacter::Attack()
 {
-	if (ActionState == EActionState::EAS_Unoccupied)
+	if (CanAttack())
 	{
 		PlayAttackMontage();
 		ActionState = EActionState::EAS_Attacking;
 	}
-	
+}
+
+bool AValoriaCharacter::CanAttack()
+{
+	return ActionState == EActionState::EAS_Unoccupied && 
+			CharacterState != ECharacterState::ECS_Unequipped;
 }
 
 void AValoriaCharacter::PlayAttackMontage()
@@ -132,7 +139,6 @@ void AValoriaCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 
 void AValoriaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
