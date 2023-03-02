@@ -41,7 +41,7 @@ void AValoriaCharacter::BeginPlay()
 
 void AValoriaCharacter::MoveForward(float Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	if (Controller && (Value != 0))
 	{
 		// find which way is forward according to controller rotation
@@ -56,7 +56,7 @@ void AValoriaCharacter::MoveForward(float Value)
 
 void AValoriaCharacter::MoveRight(float Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	if (Controller && (Value != 0))
 	{
 		// find which way is right
@@ -85,6 +85,23 @@ void AValoriaCharacter::EKeyPressed()
 	{
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+		OverlappingItem = nullptr;
+		EquippedWeapon = OverlappingWeapon;
+	}
+	else
+	{
+		if (CanUnequip())
+		{
+			PlayEquipMontage(FName("Unequip"));
+			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_Equipping;
+		}
+		else if (CanEquip())
+		{
+			PlayEquipMontage(FName("Equip"));
+			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_Equipping;
+		}
 	}
 }
 
@@ -101,6 +118,40 @@ bool AValoriaCharacter::CanAttack()
 {
 	return ActionState == EActionState::EAS_Unoccupied && 
 			CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+bool AValoriaCharacter::CanUnequip()
+{
+	return ActionState == EActionState::EAS_Unoccupied && 
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+bool AValoriaCharacter::CanEquip()
+{
+	return ActionState == EActionState::EAS_Unoccupied && 
+		CharacterState == ECharacterState::ECS_Unequipped &&
+		EquippedWeapon;
+}
+
+void AValoriaCharacter::Disarm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("HipSocket"));
+	}
+}
+
+void AValoriaCharacter::Arm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void AValoriaCharacter::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void AValoriaCharacter::PlayAttackMontage()
@@ -126,6 +177,16 @@ void AValoriaCharacter::PlayAttackMontage()
 				break;
 		}
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+void AValoriaCharacter::PlayEquipMontage(FName SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && EquipMontage)
+	{
+		AnimInstance->Montage_Play(EquipMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
 	}
 }
 
