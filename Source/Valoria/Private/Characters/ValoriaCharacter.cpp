@@ -9,6 +9,7 @@
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
 
 
 AValoriaCharacter::AValoriaCharacter()
@@ -31,7 +32,6 @@ AValoriaCharacter::AValoriaCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 
 }
-
 
 void AValoriaCharacter::BeginPlay()
 {
@@ -213,5 +213,13 @@ void AValoriaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(FName("Equip"), IE_Pressed, this, &AValoriaCharacter::EKeyPressed);
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &AValoriaCharacter::Attack);
 
+}
+
+void AValoriaCharacter::SetWeaponCollision(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+	}
 }
 
