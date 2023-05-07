@@ -8,6 +8,8 @@
 #include "Interfaces/HitInterface.h"
 #include "Enemy.generated.h"
 
+class UAnimMontage;
+
 UCLASS()
 class VALORIA_API AEnemy : public ACharacter, public IHitInterface
 {
@@ -21,6 +23,19 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	//
+	// Playing montages
+	//
+	void PlayHitReactMontage(const FName& SectionName);
+
+private:
+
+	//
+	// Animation Montages
+	//
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* HitReactMontage;
+
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
@@ -29,5 +44,6 @@ public:
 	virtual void GetHit(const FVector& ImpactPoint) override;
 
 };
+
 
 

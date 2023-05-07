@@ -41,7 +41,7 @@ protected:
 	// Playing montages
 	//
 	void PlayAttackMontage();
-	void PlayEquipMontage(FName SectionName);
+	void PlayEquipMontage(const FName& SectionName);
 	
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
