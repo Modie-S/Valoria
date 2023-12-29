@@ -53,7 +53,13 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
 	
+	DirectionalHitReact(ImpactPoint);
+}
+
+void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
+{
 	const FVector Forward = GetActorForwardVector();
+
 	// Lower impact point to enemy's actor location z
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
 	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
@@ -72,7 +78,7 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	{
 		Theta *= -1.f;
 	}
-	
+
 	FName Section("HitBack");
 
 	if (Theta >= -45.f && Theta < 45.f)
@@ -87,11 +93,11 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	{
 		Section = FName("HitRight");
 	}
-	
+
 	PlayHitReactMontage(Section);
-	
+
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 5.f, FColor::Blue, 5.f);
-	
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(

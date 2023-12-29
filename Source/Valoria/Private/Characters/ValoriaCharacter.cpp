@@ -220,6 +220,7 @@ void AValoriaCharacter::SetWeaponCollision(ECollisionEnabled::Type CollisionEnab
 	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
 	{
 		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+		EquippedWeapon->IgnoreActors.Empty();
 	}
 }
 
