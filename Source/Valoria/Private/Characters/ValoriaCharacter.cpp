@@ -157,12 +157,11 @@ void AValoriaCharacter::FinishEquipping()
 void AValoriaCharacter::PlayAttackMontage()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AttackMontage && CharacterState == ECharacterState::ECS_EquippedOneHandedWeapon)
+	if (AnimInstance && AttackMontage && ( CharacterState == ECharacterState::ECS_EquippedOneHandedWeapon ) )
 	{
 		AnimInstance->Montage_Play(AttackMontage);
-		const int32 Selection = FMath::RandRange(0, 2);
 		FName SectionName = FName();
-		switch (Selection)
+		switch (CurrentAttackIndex)
 		{
 			case 0:
 				SectionName = FName("Attack1");
@@ -173,10 +172,18 @@ void AValoriaCharacter::PlayAttackMontage()
 			case 2:
 				SectionName = FName("Attack3");
 				break;
+			case 3:
+				SectionName = FName("Attack4");
+				break;
 			default:
 				break;
 		}
+
+		// Jump to the determined section
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+
+		// Increment and reset CurrentAttackIndex
+		CurrentAttackIndex = (CurrentAttackIndex + 1) % 4;
 	}
 }
 

@@ -12,51 +12,51 @@
 
 AEnemy::AEnemy()
 {
- 	
+
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
-	GetMesh()->SetGenerateOverlapEvents(true);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionObjectType( ECollisionChannel::ECC_WorldDynamic );
+	GetMesh()->SetCollisionResponseToChannel( ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block );
+	GetMesh()->SetCollisionResponseToChannel( ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore );
+	GetMesh()->SetGenerateOverlapEvents( true );
+	GetCapsuleComponent()->SetCollisionResponseToChannel( ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore );
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-void AEnemy::PlayHitReactMontage(const FName& SectionName)
+void AEnemy::PlayHitReactMontage( const FName& SectionName )
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && HitReactMontage)
+	if( AnimInstance && HitReactMontage )
 	{
-		AnimInstance->Montage_Play(HitReactMontage);
-		AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage);
-	}	
+		AnimInstance->Montage_Play( HitReactMontage );
+		AnimInstance->Montage_JumpToSection( SectionName, HitReactMontage );
+	}
 }
 
-void AEnemy::Tick(float DeltaTime)
+void AEnemy::Tick( float DeltaTime )
 {
-	Super::Tick(DeltaTime);
-
-}
-
-void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::Tick( DeltaTime );
 
 }
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::SetupPlayerInputComponent( UInputComponent* PlayerInputComponent )
 {
-	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
-	
-	DirectionalHitReact(ImpactPoint);
+	Super::SetupPlayerInputComponent( PlayerInputComponent );
 
-	if (HitSound)
+}
+
+void AEnemy::GetHit_Implementation( const FVector& ImpactPoint )
+{
+	//DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
+
+	DirectionalHitReact( ImpactPoint );
+
+	if( HitSound )
 	{
 		UGameplayStatics::PlaySoundAtLocation(
 			this,
@@ -64,48 +64,58 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 			ImpactPoint
 		);
 	}
+
+	if( HitParticles && GetWorld() )
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticles,
+			ImpactPoint
+		);
+	}
 }
 
-void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
+void AEnemy::DirectionalHitReact( const FVector& ImpactPoint )
 {
 	const FVector Forward = GetActorForwardVector();
 
 	// Lower impact point to enemy's actor location z
-	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
-	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
+	const FVector ImpactLowered( ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z );
+	const FVector ToHit = ( ImpactLowered - GetActorLocation() ).GetSafeNormal();
 
 	// Returns a scalar value - Forward * ToHit = |Forward| |ToHit| * cos(theta)
 	// |Forward| = 1, |ToHit| = 1, so Forward * ToHit = cos(theta)
-	const double CosTheta = FVector::DotProduct(Forward, ToHit);
+	const double CosTheta = FVector::DotProduct( Forward, ToHit );
 	// Take inverse cosine (arc-cosine) of cos(theta) to get theta
-	double Theta = FMath::Acos(CosTheta);
+	double Theta = FMath::Acos( CosTheta );
 	// convert from radians to degrees
-	Theta = FMath::RadiansToDegrees(Theta);
+	Theta = FMath::RadiansToDegrees( Theta );
 
 	// if CrossProduct points down, theta negative
-	const FVector CrossProduct = FVector::CrossProduct(Forward, ToHit);
-	if (CrossProduct.Z < 0)
+	const FVector CrossProduct = FVector::CrossProduct( Forward, ToHit );
+	if( CrossProduct.Z < 0 )
 	{
 		Theta *= -1.f;
 	}
 
-	FName Section("HitBack");
+	FName Section( "HitBack" );
 
-	if (Theta >= -45.f && Theta < 45.f)
+	if( Theta >= -45.f && Theta < 45.f )
 	{
-		Section = FName("HitFront");
+		Section = FName( "HitFront" );
 	}
-	else if (Theta >= -135.f && Theta < -45.f)
+	else if( Theta >= -135.f && Theta < -45.f )
 	{
-		Section = FName("HitLeft");
+		Section = FName( "HitLeft" );
 	}
-	else if (Theta >= 45.f && Theta < 135.f)
+	else if( Theta >= 45.f && Theta < 135.f )
 	{
-		Section = FName("HitRight");
+		Section = FName( "HitRight" );
 	}
 
-	PlayHitReactMontage(Section);
+	PlayHitReactMontage( Section );
 
+	/*
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 5.f, FColor::Blue, 5.f);
 
 	if (GEngine)
@@ -119,5 +129,6 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 	}
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + Forward * 60.f, 5.f, FColor::Red, 5.f);
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 5.f, FColor::Green, 5.f);
+	*/
 }
 

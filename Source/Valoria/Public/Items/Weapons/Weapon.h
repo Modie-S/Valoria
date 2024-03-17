@@ -11,7 +11,7 @@ class USoundBase;
 class UBoxComponent;
 
 /**
- * 
+ *
  */
 UCLASS()
 class VALORIA_API AWeapon : public AItem
@@ -22,8 +22,8 @@ public:
 
 	AWeapon();
 
-	void Equip(USceneComponent* InParent, FName InSocketName);
-	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
+	void Equip( USceneComponent* InParent, FName InSocketName );
+	void AttachMeshToSocket( USceneComponent* InParent, const FName& InSocketName );
 
 	TArray<AActor*> IgnoreActors;
 
@@ -31,26 +31,29 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
+	virtual void OnSphereOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult ) override;
+	virtual void OnSphereEndOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex ) override;
 
 	UFUNCTION()
-	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+	void OnBoxOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult );
+
+	UFUNCTION( BlueprintImplementableEvent )
+	void CreateFields( const FVector& FieldLocation ); // No need for a function definition; this is a blueprint event
+
 
 
 private:
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	UPROPERTY( EditAnywhere, Category = "Weapon Properties" )
 	USoundBase* EquipSound;
 
-	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	UPROPERTY( VisibleAnywhere, Category = "Weapon Properties" )
 	UBoxComponent* WeaponBox;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY( VisibleAnywhere )
 	USceneComponent* BoxTraceStart;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY( VisibleAnywhere )
 	USceneComponent* BoxTraceEnd;
 
 

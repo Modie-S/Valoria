@@ -86,6 +86,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* EquipMontage;
 
+	int32 CurrentAttackIndex = 0;
+
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
