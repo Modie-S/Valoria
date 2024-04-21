@@ -8,7 +8,7 @@
 #include "HitInterface.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE ( MinimalAPI )
+UINTERFACE( MinimalAPI )
 class UHitInterface : public UInterface
 {
 	GENERATED_BODY ()
